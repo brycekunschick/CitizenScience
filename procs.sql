@@ -93,3 +93,24 @@ GO
 exec GetProjectDetails 501
 GO
 */
+
+
+
+
+/*
+alter table Observations
+add UserID nvarchar(64);
+*/
+
+
+create or alter procedure GetObservationsByUser
+	@UserID nvarchar(64)
+as
+	select ObservationID, Notes
+	from dbo.Observations
+	where UserID = @UserID
+GO
+
+/*
+exec GetObservationsByUser
+*/
