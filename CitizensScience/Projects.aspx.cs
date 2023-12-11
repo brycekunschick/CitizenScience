@@ -17,19 +17,48 @@ namespace CitizensScience
             if (!IsPostBack)
             {
                 string raID = Request.QueryString["RA"];
-
-                // Check if raID is not provided and redirect
                 if (string.IsNullOrEmpty(raID))
                 {
                     Response.Redirect("ResearchAreas.aspx");
                 }
                 else
                 {
-                    // Call GetDataFromDatabase with the RA parameter
+                    string researchAreaName = GetResearchAreaName(raID);
+                    litHeader.Text = "Projects for " + researchAreaName;
+
                     ProjectsRepeater.DataSource = GetDataFromDatabase(raID);
                     ProjectsRepeater.DataBind();
                 }
             }
+        }
+
+        protected void btnBackToResearchAreas_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("ResearchAreas.aspx");
+        }
+
+        private string GetResearchAreaName(string raID)
+        {
+            string researchAreaName = "";
+            string connString = ConfigurationManager.ConnectionStrings["CitizenScienceDB"].ToString();
+
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand("GetResearchAreaName", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@ResearchAreaID", raID);
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        researchAreaName = reader["ResearchName"].ToString();
+                    }
+                }
+            }
+
+            return researchAreaName;
         }
 
         private DataTable GetDataFromDatabase(string raID)

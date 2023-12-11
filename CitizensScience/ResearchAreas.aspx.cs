@@ -16,13 +16,55 @@ namespace CitizensScience
         {
             if (!IsPostBack)
             {
-                // Get the InstID from the query string
                 string instID = Request.QueryString["InstID"];
-
-                // Pass the InstID to GetDataFromDatabase, which will handle null or empty
-                ResearchAreasRepeater.DataSource = GetDataFromDatabase(instID);
+                DataTable dt = GetDataFromDatabase(instID);
+                ResearchAreasRepeater.DataSource = dt;
                 ResearchAreasRepeater.DataBind();
+
+                if (string.IsNullOrEmpty(instID))
+                {
+                    litHeader.Text = "All Research Areas";
+                    btnBack.Text = "Back to Home";
+                    btnBack.CommandArgument = "Default.aspx";
+                }
+                else
+                {
+                    string institutionName = GetInstitutionName(instID);
+                    litHeader.Text = "Research Areas for " + institutionName;
+                    btnBack.Text = "Back to Institutions";
+                    btnBack.CommandArgument = "Institutions.aspx";
+                }
             }
+        }
+
+        protected void btnBack_Click(object sender, EventArgs e)
+        {
+            Button btn = (Button)sender;
+            Response.Redirect(btn.CommandArgument);
+        }
+
+        private string GetInstitutionName(string instID)
+        {
+            string institutionName = "";
+            string connString = ConfigurationManager.ConnectionStrings["CitizenScienceDB"].ToString();
+
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand("GetInstitutionName", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@InstitutionID", instID);
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        institutionName = reader["InstitutionName"].ToString();
+                    }
+                }
+            }
+
+            return institutionName;
         }
 
         private DataTable GetDataFromDatabase(string instID)

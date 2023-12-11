@@ -22,7 +22,10 @@ namespace CitizensScience
                 // Redirect to Default.aspx if userID is null (user not logged in)
                 if (string.IsNullOrEmpty(userID))
                 {
-                    Response.Redirect("Default.aspx");
+                    litMessage.Text = "You must be logged in to view or add observations.";
+                    ObservationsGridView.Visible = false;
+                    AddObservationButton.Visible = false;
+                    LoginButton.Visible = true; // Show login button
                     return;
                 }
 
@@ -30,6 +33,11 @@ namespace CitizensScience
                 ObservationsGridView.DataSource = dt;
                 ObservationsGridView.DataBind();
             }
+        }
+
+        protected void LoginButton_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("Login.aspx");
         }
 
         private DataTable GetDataFromDatabase(string userID)

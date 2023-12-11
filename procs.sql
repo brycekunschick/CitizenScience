@@ -112,5 +112,17 @@ as
 GO
 
 /*
-exec GetObservationsByUser
+exec GetObservationsByUser '21d7f873-a438-443c-8230-7666f0e57f9a'
+*/
+
+create or alter procedure AddObservation
+	@UserID nvarchar(64),
+	@Notes nvarchar(500)
+AS
+	insert into Observations (UserID, Notes, ObservedDate)
+	values (@UserID, @Notes, '2023-09-01 00:00:00.0000000')
+GO
+
+/*
+exec AddObservation @UserID = '21d7f873-a438-443c-8230-7666f0e57f9a', @Notes = 'Sample Observation Note';
 */

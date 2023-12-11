@@ -15,13 +15,22 @@ namespace CitizensScience
     {
 
         /// <summary>
-        /// AddObservationButton control.
+        /// litMessage control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button AddObservationButton;
+        protected global::System.Web.UI.WebControls.Literal litMessage;
+
+        /// <summary>
+        /// LoginButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button LoginButton;
 
         /// <summary>
         /// ObservationsGridView control.
@@ -31,5 +40,14 @@ namespace CitizensScience
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView ObservationsGridView;
+
+        /// <summary>
+        /// AddObservationButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button AddObservationButton;
     }
 }
