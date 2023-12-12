@@ -19,25 +19,49 @@ namespace CitizensScience
             {
                 string userID = HttpContext.Current.User.Identity.GetUserId();
 
-                // Redirect to Default.aspx if userID is null (user not logged in)
                 if (string.IsNullOrEmpty(userID))
                 {
                     litMessage.Text = "You must be logged in to view or add observations.";
-                    ObservationsGridView.Visible = false;
-                    AddObservationButton.Visible = false;
                     LoginButton.Visible = true; // Show login button
-                    return;
                 }
+                else
+                {
+                    // Load initial observations
+                    DataTable dt = GetDataFromDatabase(userID);
+                    ObservationsGridView.DataSource = dt;
+                    ObservationsGridView.DataBind();
 
-                DataTable dt = GetDataFromDatabase(userID);
-                ObservationsGridView.DataSource = dt;
-                ObservationsGridView.DataBind();
+                    // Make controls visible for logged-in users
+                    ObservationsGridView.Visible = true;
+                    AddObservationButton.Visible = true;
+                    btnBackToHome.Visible = true;
+                    txtSearch.Visible = true;
+                    btnSearch.Visible = true;
+                }
             }
         }
 
         protected void LoginButton_Click(object sender, EventArgs e)
         {
             Response.Redirect("Login.aspx");
+        }
+
+        protected void AddObservationButton_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("AddObservation.aspx");
+        }
+
+        protected void btnBackToHome_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("Default.aspx");
+        }
+        protected void btnSearch_Click(object sender, EventArgs e)
+        {
+            string userID = HttpContext.Current.User.Identity.GetUserId();
+            string searchTerm = txtSearch.Text.Trim();
+            DataTable dt = SearchObservations(userID, searchTerm);
+            ObservationsGridView.DataSource = dt;
+            ObservationsGridView.DataBind();
         }
 
         private DataTable GetDataFromDatabase(string userID)
@@ -57,10 +81,25 @@ namespace CitizensScience
 
             return dt;
         }
-
-        protected void AddObservationButton_Click(object sender, EventArgs e)
+        private DataTable SearchObservations(string userID, string searchTerm)
         {
-            Response.Redirect("AddObservation.aspx");
+            DataTable dt = new DataTable();
+            string connString = ConfigurationManager.ConnectionStrings["CitizenScienceDB"].ConnectionString;
+
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                SqlCommand cmd = new SqlCommand("SearchObservationsByUser", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@UserID", userID);
+                cmd.Parameters.AddWithValue("@SearchTerm", searchTerm);
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                da.Fill(dt);
+            }
+
+            return dt;
         }
+
+
     }
 }

@@ -39,6 +39,37 @@ namespace CitizensScience
             }
         }
 
+        protected void btnBackToProjects_Click(object sender, EventArgs e)
+        {
+            string projectID = Request.QueryString["ProjectID"];
+            string researchID = GetResearchIDByProject(projectID);
+            Response.Redirect($"Projects.aspx?RA={researchID}");
+        }
+
+        private string GetResearchIDByProject(string projectID)
+        {
+            string researchID = "";
+            string connString = ConfigurationManager.ConnectionStrings["CitizenScienceDB"].ToString();
+
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand("GetResearchIDByProject", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@ProjectID", projectID);
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        researchID = reader["ResearchID"].ToString();
+                    }
+                }
+            }
+
+            return researchID;
+        }
+
         private DataTable GetDataFromDatabase(string projectID)
         {
             DataTable dt = new DataTable();

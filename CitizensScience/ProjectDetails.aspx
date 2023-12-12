@@ -12,5 +12,7 @@
             <strong>Description:</strong> <asp:Label ID="lblDescription" runat="server" /><br />
             <strong>Research ID:</strong> <asp:Label ID="lblResearchID" runat="server" /><br />
         </div>
+        <!-- Back to Projects Button -->
+        <asp:Button ID="btnBackToProjects" runat="server" Text="Back to Projects" CssClass="btn btn-link" Style="color: gray;" OnClick="btnBackToProjects_Click" />
     </main>
 </asp:Content>
